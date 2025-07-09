@@ -7,6 +7,7 @@ import uvicorn
 import os
 
 settings = get_settings()
+os.environ["OPENAI_API_KEY"] = settings.OPENAI_API_KEY
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -31,12 +32,10 @@ async def publish_message(message: str):
     await app.state.rabbit_mq_send(message)
     return {"message": "Message sent to RabbitMQ"}
 
-
-os.environ["OPENAI_API_KEY"] = settings.OPENAI_API_KEY
-
 # print all settings
 for key, value in settings.model_dump().items():
-    print(f"{key}: {value}")
+    pass
+    # print(f"{key}: {value}")
 
 app.include_router(router, prefix="/api/v1")
 @app.get("/")
