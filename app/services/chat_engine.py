@@ -39,17 +39,22 @@ class ChatEngineService:
     
     async def get_structured_output(self, model_class: type[T], query: str, metadata_filters: list[dict] | None = None) -> T:
         response_synthesizer = response_synthesizers.get_response_synthesizer(
-            response_mode=response_synthesizers.ResponseMode.COMPACT,
+            response_mode=response_synthesizers.ResponseMode.TREE_SUMMARIZE,
         )
         # If metadata_filters is None, we can use an empty list to avoid issues with the retriever
         filters = vector_stores.MetadataFilters.from_dicts(filter_dicts=metadata_filters) if metadata_filters else None
-        retriever = retrievers.VectorIndexRetriever(index=self.index, similarity_top_k=5, filters=filters)
+        retriever = retrievers.VectorIndexRetriever(index=self.index, similarity_top_k=50, sparse_top_k=52, vector_store_query_mode='hybrid', filters=filters)
         engine = query_engine.RetrieverQueryEngine(
             retriever=retriever,
             response_synthesizer=response_synthesizer,
-            node_postprocessors=[self.rerank_model] if self.rerank_model else []
+            node_postprocessors=[self.rerank_model] if self.rerank_model else [],
         )
+        retriv = retriever.retrieve(query)
+        for node in retriv:
+            print(f"Retrieving node: {node.get_content()}")
         resp = engine.query(query)
+
+        print(f"Response: {resp.response}")
 
         st_llm = self.llm.as_structured_llm(model_class)
         st_text = st_llm.complete(resp.response)

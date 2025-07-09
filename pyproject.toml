@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "aio-pika>=9.5.5",
     "fastapi>=0.115.13",
     "llama-index>=0.12.43",
     "llama-index-embeddings-fastembed>=0.3.2",

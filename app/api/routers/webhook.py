@@ -12,10 +12,11 @@ router = APIRouter(
 
 @router.post("/interview-invitation")
 async def update_application(payload: UpdateApplicationRequest, services: Services = Depends(get_services)):
-    return {
-        "applicant": services.hireai_db.applicant.update(payload.application_id, {
+    application = await services.hireai_db.applicant.update(payload.application_id, {
             "skills": payload.skills,
-        }),
+        })
+    return {
+        "applicant": application,
         "interview_invitation": services.hireai_db.interview_invitation.update(payload.invitation_interview_id, {
             "status": payload.status,
             "dateTaken": datetime.now().isoformat() if payload.status == "COMPLETED" else None,

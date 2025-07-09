@@ -25,7 +25,8 @@ def get_vector_stores() -> BasePydanticVectorStore:
                 host=settings.QDRANT_HOST,
                 port=settings.QDRANT_PORT
             ),
-            collection_name=settings.QDRANT_COLLECTION_NAME
+            collection_name=settings.QDRANT_COLLECTION_NAME,
+            enable_hybrid=True
         )
 
     # chroma vector store
@@ -83,4 +84,18 @@ def get_services(
         llm=llm,
         hireai_db=get_hireai_db()
     )
+
+def build_services() -> Services:
+    vector_store = get_vector_stores()
+    embedding_model = get_embedding_models()
+    llm = get_llm()
+    hireai_db = get_hireai_db()
+
+    return Services(
+        vector_store=vector_store,
+        embedding_model=embedding_model,
+        llm=llm,
+        hireai_db=hireai_db
+    )
+
 

@@ -27,7 +27,7 @@ class ApplicantContext:
                 return json.dumps(value)
             return value
 
-    def update(self, applicant_id: int, data: dict) -> dict:
+    async def update(self, applicant_id: int, data: dict) -> dict:
         try:
             set_clause = ', '.join([f"{key} = %s" for key in data.keys()])
 

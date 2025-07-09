@@ -38,6 +38,8 @@ class Settings(BaseSettings):
     PGSSLMODE: str = ""
     PGCHANNELBINDING: str = ""
 
+    RABBITMQ_CONNECTION_URL: str = ""
+
     model_config = SettingsConfigDict(env_file=".env")
 
 @lru_cache
