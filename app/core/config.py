@@ -31,6 +31,13 @@ class Settings(BaseSettings):
     # llmsherpa url
     LLM_SHERPA_URL: str = ""
 
+    PGHOST: str = ""
+    PGDATABASE: str = ""
+    PGUSER: str = ""
+    PGPASSWORD: str = ""
+    PGSSLMODE: str = ""
+    PGCHANNELBINDING: str = ""
+
     model_config = SettingsConfigDict(env_file=".env")
 
 @lru_cache

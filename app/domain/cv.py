@@ -12,6 +12,13 @@ class EducationEntry(BaseModel):
     major: str
     institution: str
 
+class SimpleCVModelExtract(BaseModel):
+    summary: Optional[str] = Field(None, description="Summary or headline from CV")
+    educations: Optional[List[EducationEntry]] = Field(None, description="List of education entries")
+    experiences: Optional[List[WorkHistoryEntry]] = Field(None, description="List of work history entries")
+    location: Optional[str] = Field(None, description="Location of the candidate")
+    languages: Optional[List[str]] = Field(None, description="Languages spoken by the candidate")
+
 class CVModel(BaseModel):
     full_name: Optional[str] = Field(None, description="Optional (can be ignored for matching)")
     job_title_target_role: Optional[str] = Field(None, description="If mentioned in summary or headline")

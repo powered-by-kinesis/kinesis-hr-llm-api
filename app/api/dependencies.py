@@ -13,6 +13,7 @@ from llama_index.core.llms import LLM
 from llama_index.llms.openai import OpenAI
 
 from app.services import Services
+from app.services.hireai_db import HireAIDB
 
 settings = get_settings()
 
@@ -37,6 +38,13 @@ def get_vector_stores() -> BasePydanticVectorStore:
     else:
         raise ValueError(f"Unsupported vector store: {settings.USE_VECTOR_STORE}")
 
+def get_llm() -> LLM:
+    if settings.USE_LLM == "openai":
+        return OpenAI(model=settings.OPENAI_LLM_MODEL)
+    
+    else:
+        raise ValueError(f"Unsupported LLM: {settings.USE_LLM}")
+    
 def get_embedding_models() -> EmbedType:
     # OpenAI embedding model
     if settings.USE_EMBEDDING_MODEL == "openai":
@@ -54,13 +62,15 @@ def get_embedding_models() -> EmbedType:
     else:
         raise ValueError(f"Unsupported embedding model: {settings.USE_EMBEDDING_MODEL}")
     
-
-def get_llm() -> LLM:
-    if settings.USE_LLM == "openai":
-        return OpenAI(model=settings.OPENAI_LLM_MODEL)
-    
-    else:
-        raise ValueError(f"Unsupported LLM: {settings.USE_LLM}")
+def get_hireai_db()-> HireAIDB:
+    return HireAIDB(
+        db_config={
+            "dbname": settings.PGDATABASE,
+            "user": settings.PGUSER,
+            "password": settings.PGPASSWORD,
+            "host": settings.PGHOST,
+        }
+    )
 
 def get_services(
     vector_store: BasePydanticVectorStore = Depends(get_vector_stores),
@@ -70,6 +80,7 @@ def get_services(
     return Services(
         vector_store=vector_store,
         embedding_model=embedding_model,
-        llm=llm
+        llm=llm,
+        hireai_db=get_hireai_db()
     )
 

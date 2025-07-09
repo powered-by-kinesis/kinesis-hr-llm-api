@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Depends, Body
 from fastapi.responses import StreamingResponse
+from fastapi import APIRouter, Depends
 from app.api.dependencies import get_services
 from app.services import Services
 from app.api.schemas import ConversationRequest
@@ -11,6 +11,7 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
+# response mode streaming
 @router.post("/stream")
 async def chat_stream(
     payload: ConversationRequest,
@@ -27,12 +28,16 @@ async def chat_stream(
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")
 
+# response mode blocking
 @router.post("/send")
 async def chat_send(
     payload: ConversationRequest,
     services: Services = Depends(get_services)
 ):
-    response = services.chat_engine_service.send_message(payload.query, payload.conversation_id)
+    response = services.chat_engine_service.send_message(
+        payload.query, 
+        payload.conversation_id
+    )
     return {
         "data": response.response
     }

@@ -11,9 +11,9 @@ class VectorStoreIndexService:
         self.pdf_loader = SmartPDFLoader(llmsherpa_api_url=settings.LLM_SHERPA_URL + "&applyOcr=yes")
         self.reader = LayoutPDFReader(settings.LLM_SHERPA_URL)
 
-    def add(self, files: list[UploadFile], metadata: dict | None = None):
+    async def add(self, files: list[UploadFile], metadata: dict | None = None):
         for file in files:
             read_file = file.file.read()
             doc = self.reader.read_pdf(contents=read_file, path_or_url="")
             for chunk in doc.chunks():
-                self.index.insert(Document(text=chunk.to_context_text(), extra_info={}))
+                self.index.insert(Document(text=chunk.to_context_text(), extra_info=metadata))

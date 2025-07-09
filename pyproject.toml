@@ -16,6 +16,7 @@ dependencies = [
     "llama-index-vector-stores-qdrant>=0.6.0",
     "llmsherpa>=0.1.4",
     "protobuf>=3.20,<3.21",
+    "psycopg2>=2.9.10",
     "pydantic-settings>=2.9.1",
     "python-multipart>=0.0.20",
     "qdrant-client>=1.14.3",
