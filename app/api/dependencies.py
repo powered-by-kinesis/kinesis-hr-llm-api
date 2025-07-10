@@ -76,13 +76,14 @@ async def get_hireai_db() -> HireAIDB:
 def get_services(
     vector_store: BasePydanticVectorStore = Depends(get_vector_stores),
     embedding_model: EmbedType = Depends(get_embedding_models),
-    llm: LLM = Depends(get_llm)
+    llm: LLM = Depends(get_llm),
+    hireai_db: HireAIDB = Depends(get_hireai_db)
 ) -> Services:
     return Services(
         vector_store=vector_store,
         embedding_model=embedding_model,
         llm=llm,
-        hireai_db=get_hireai_db()
+        hireai_db=hireai_db
     )
 
 async def build_services() -> Services:
