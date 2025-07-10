@@ -3,8 +3,10 @@ from contextlib import asynccontextmanager
 from app.core import get_settings
 from app.api.routers import router
 from app.message_broker import RabbitMQ
+from app.api.schemas import PublishMessageRequest
 import uvicorn
 import os
+import json
 
 settings = get_settings()
 os.environ["OPENAI_API_KEY"] = settings.OPENAI_API_KEY
@@ -25,11 +27,11 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-@app.post("/publish")
-async def publish_message(message: str):
+@app.post("/publisher/publish")
+async def publish_message(payload: PublishMessageRequest):
     if not hasattr(app.state, 'rabbit_mq_send'):
         raise RuntimeError("RabbitMQ connection is not established.")
-    await app.state.rabbit_mq_send(message)
+    await app.state.rabbit_mq_send(json.dumps(payload.model_dump(exclude_none=True)))
     return {"message": "Message sent to RabbitMQ"}
 
 # print all settings
