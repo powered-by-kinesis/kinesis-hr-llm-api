@@ -6,6 +6,7 @@ import json
 class RabbitMQ:
     def __init__(self, connection_string: str):
         self.connection_string = connection_string
+        self.services = build_services()
     
     async def connect(self):
         self.connection = await connect_robust(self.connection_string)
@@ -14,7 +15,6 @@ class RabbitMQ:
         await self.queue.consume(self.on_message, no_ack=False)
 
     async def on_message(self, message: abc.AbstractIncomingMessage):
-        self.services = build_services()
         try:
             body = message.body.decode()
             json_body = json.loads(body)
@@ -63,7 +63,6 @@ class RabbitMQ:
             print(f"Error processing message: {e}")
 
     async def send_message(self, message: str):
-        self.services = build_services()
         if not hasattr(self, 'channel'):
             raise RuntimeError("RabbitMQ connection is not established.")
         await self.channel.default_exchange.publish(
