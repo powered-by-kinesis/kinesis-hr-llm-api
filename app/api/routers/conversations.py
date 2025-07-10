@@ -18,9 +18,9 @@ async def chat_stream(
     services: Services = Depends(get_services)
 ):
 
-    async def event_generator():
+    def event_generator():
         yield "event: start\ndata: [START]\n\n"
-        async for token in services.chat_engine_service.stream_message(
+        for token in services.chat_engine_service.stream_message(
             payload.query, payload.conversation_id
         ).response_gen:
             yield f"event: message\ndata: {token}\n\n"
@@ -34,8 +34,8 @@ async def chat_send(
     payload: ConversationRequest,
     services: Services = Depends(get_services)
 ):
-    response = await services.chat_engine_service.send_message(
-        payload.query,
+    response = services.chat_engine_service.send_message(
+        payload.query, 
         payload.conversation_id
     )
     return {

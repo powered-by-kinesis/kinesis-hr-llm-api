@@ -17,7 +17,7 @@ from app.services.hireai_db import HireAIDB
 
 settings = get_settings()
 
-async def get_vector_stores() -> BasePydanticVectorStore: 
+def get_vector_stores() -> BasePydanticVectorStore: 
     # qdrant vector store
     if settings.USE_VECTOR_STORE == "qdrant":
         return qdrant.QdrantVectorStore(
@@ -39,14 +39,14 @@ async def get_vector_stores() -> BasePydanticVectorStore:
     else:
         raise ValueError(f"Unsupported vector store: {settings.USE_VECTOR_STORE}")
 
-async def get_llm() -> LLM:
+def get_llm() -> LLM:
     if settings.USE_LLM == "openai":
         return OpenAI(model=settings.OPENAI_LLM_MODEL)
     
     else:
         raise ValueError(f"Unsupported LLM: {settings.USE_LLM}")
-
-async def get_embedding_models() -> EmbedType:
+    
+def get_embedding_models() -> EmbedType:
     # OpenAI embedding model
     if settings.USE_EMBEDDING_MODEL == "openai":
         return openai.OpenAIEmbedding(
@@ -62,8 +62,8 @@ async def get_embedding_models() -> EmbedType:
         )
     else:
         raise ValueError(f"Unsupported embedding model: {settings.USE_EMBEDDING_MODEL}")
-
-async def get_hireai_db() -> HireAIDB:
+    
+def get_hireai_db()-> HireAIDB:
     return HireAIDB(
         db_config={
             "dbname": settings.PGDATABASE,
@@ -76,7 +76,7 @@ async def get_hireai_db() -> HireAIDB:
 def get_services(
     vector_store: BasePydanticVectorStore = Depends(get_vector_stores),
     embedding_model: EmbedType = Depends(get_embedding_models),
-    llm: LLM = Depends(get_llm),
+    llm: LLM = Depends(get_llm),    
     hireai_db: HireAIDB = Depends(get_hireai_db)
 ) -> Services:
     return Services(
@@ -86,11 +86,11 @@ def get_services(
         hireai_db=hireai_db
     )
 
-async def build_services() -> Services:
-    vector_store = await get_vector_stores()
-    embedding_model = await get_embedding_models()
-    llm = await get_llm()
-    hireai_db = await get_hireai_db()
+def build_services() -> Services:
+    vector_store = get_vector_stores()
+    embedding_model = get_embedding_models()
+    llm = get_llm()
+    hireai_db = get_hireai_db()
 
     return Services(
         vector_store=vector_store,

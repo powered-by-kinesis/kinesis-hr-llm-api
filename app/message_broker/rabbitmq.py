@@ -8,13 +8,13 @@ class RabbitMQ:
         self.connection_string = connection_string
     
     async def connect(self):
-        self.services = await build_services()
         self.connection = await connect_robust(self.connection_string)
         self.channel = await self.connection.channel()
         self.queue = await self.channel.declare_queue("test_change", durable=True)
         await self.queue.consume(self.on_message, no_ack=False)
 
     async def on_message(self, message: abc.AbstractIncomingMessage):
+        self.services = build_services()
         try:
             body = message.body.decode()
             json_body = json.loads(body)
@@ -63,6 +63,7 @@ class RabbitMQ:
             print(f"Error processing message: {e}")
 
     async def send_message(self, message: str):
+        self.services = build_services()
         if not hasattr(self, 'channel'):
             raise RuntimeError("RabbitMQ connection is not established.")
         await self.channel.default_exchange.publish(
