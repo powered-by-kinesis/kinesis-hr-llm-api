@@ -6,9 +6,9 @@ import json
 class RabbitMQ:
     def __init__(self, connection_string: str):
         self.connection_string = connection_string
-        self.services = build_services()
     
     async def connect(self):
+        self.services = await build_services()
         self.connection = await connect_robust(self.connection_string)
         self.channel = await self.connection.channel()
         self.queue = await self.channel.declare_queue("test_change", durable=True)
