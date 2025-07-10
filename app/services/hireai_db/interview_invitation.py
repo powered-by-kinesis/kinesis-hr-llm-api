@@ -18,8 +18,6 @@ class InterviewInvitationContext:
         except psycopg2.Error as e:
             print(f"Error fetching interview invitation {id}: {e}")
             raise e
-        finally:
-            self.cursor.close()
 
     def update(self, id: int, data: dict) -> dict:
         try:
@@ -36,5 +34,3 @@ class InterviewInvitationContext:
         except psycopg2.Error as e:
             print(f"Error updating interview invitation {id}: {e}")
             raise e
-        finally:
-            self.cursor.close()

@@ -12,7 +12,7 @@ router = APIRouter(
 
 @router.post("/interview-invitation")
 async def update_application(payload: UpdateApplicationRequest, services: Services = Depends(get_services)):
-    application = await services.hireai_db.applicant.update(payload.application_id, {
+    application = services.hireai_db.applicant.update(payload.application_id, {
             "skills": payload.skills,
         })
     return {

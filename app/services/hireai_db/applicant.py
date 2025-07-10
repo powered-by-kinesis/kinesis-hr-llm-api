@@ -19,15 +19,13 @@ class ApplicantContext:
         except psycopg2.Error as e:
             print(f"Error fetching applicant {applicant_id}: {e}")
             raise e
-        finally:
-            self.cursor.close()
 
-    def to_db_safe(slef, value):
+    def to_db_safe(self, value):
             if isinstance(value, (dict, list)):
                 return json.dumps(value)
             return value
 
-    async def update(self, applicant_id: int, data: dict) -> dict:
+    def update(self, applicant_id: int, data: dict) -> dict:
         try:
             set_clause = ', '.join([f"{key} = %s" for key in data.keys()])
 
@@ -44,5 +42,3 @@ class ApplicantContext:
         except psycopg2.Error as e:
             print(f"Error updating applicant {applicant_id}: {e}")
             raise e
-        finally:
-            self.cursor.close()

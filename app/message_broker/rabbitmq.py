@@ -33,7 +33,7 @@ class RabbitMQ:
                 )
                 st_output_dict = st_output.model_dump(exclude_none=True)
                 print(f"Structured output: {st_output_dict}")
-                await self.services.hireai_db.applicant.update(applicant_id, {
+                self.services.hireai_db.applicant.update(applicant_id, {
                     "summary": st_output_dict['summary'] if 'summary' in st_output_dict else "",
                     "education": st_output_dict['educations'] if 'educations' in st_output_dict else [],
                     "experience": st_output_dict['experiences'] if 'experiences' in st_output_dict else [],

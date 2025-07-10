@@ -43,7 +43,7 @@ async def embed_and_update_applicant(
 
     # Update the applicant in the database with the structured output
     st_output_dict = st_output.model_dump(exclude_none=True)
-    return await services.hireai_db.applicant.update(applicant_id, {
+    return services.hireai_db.applicant.update(applicant_id, {
         "summary": st_output_dict['summary'] if 'summary' in st_output_dict else "",
         "education": st_output_dict['educations'] if 'educations' in st_output_dict else [],
         "experience": st_output_dict['experiences'] if 'experiences' in st_output_dict else [],
