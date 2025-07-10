@@ -3,15 +3,16 @@ import json
 
 class ApplicantContext:
     def __init__(self, conn: psycopg2.extensions.connection):
-        self.cursor = conn.cursor()
+        self.conn = conn
 
     def get(self, applicant_id: int) -> dict:
         try:
+            cursor = self.conn.cursor()
             query = "SELECT * FROM applicants WHERE id = %s"
-            self.cursor.execute(query, (applicant_id,))
-            result = self.cursor.fetchone()
+            cursor.execute(query, (applicant_id,))
+            result = cursor.fetchone()
             if result:
-                columns = [desc[0] for desc in self.cursor.description]
+                columns = [desc[0] for desc in cursor.description]
                 return dict(zip(columns, result))
             else:
                 print(f"No applicant found with id {applicant_id}")
@@ -19,6 +20,8 @@ class ApplicantContext:
         except psycopg2.Error as e:
             print(f"Error fetching applicant {applicant_id}: {e}")
             raise e
+        finally:
+            cursor.close()
 
     def to_db_safe(self, value):
             if isinstance(value, (dict, list)):
@@ -27,6 +30,7 @@ class ApplicantContext:
 
     def update(self, applicant_id: int, data: dict) -> dict:
         try:
+            cursor = self.conn.cursor()
             set_clause = ', '.join([f"{key} = %s" for key in data.keys()])
 
             processed_data = {k: self.to_db_safe(v) for k, v in data.items()}
@@ -36,9 +40,11 @@ class ApplicantContext:
 
             query = f"UPDATE applicants SET {set_clause} WHERE id = %s"
 
-            self.cursor.execute(query, values)
-            self.cursor.connection.commit()
+            cursor.execute(query, values)
+            cursor.connection.commit()
             return self.get(applicant_id)  
         except psycopg2.Error as e:
             print(f"Error updating applicant {applicant_id}: {e}")
             raise e
+        finally:
+            cursor.close()
