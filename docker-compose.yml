@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: hireai_app
+    expose:
+      - 8000 # Internal port for the application
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx_proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+    depends_on:
+      - app
+    restart: always
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot_service
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+    depends_on:
+      - nginx
+    command: "certonly --webroot -w /var/www/certbot --force-renewal -d llmapi.nolepsekali.fun --email hamdan.py@gmail.com --agree-tos --no-eff-email"
+    # Replace your_email@example.com with your actual email
+    # This command is for initial certificate acquisition.
+    # For renewal, a different command or cron job will be used.
