@@ -1,10 +1,11 @@
-from llama_index.core import retrievers, llms, chat_engine, memory, query_engine, response_synthesizers, VectorStoreIndex, vector_stores
+from llama_index.core import retrievers, llms, chat_engine, memory, query_engine, response_synthesizers, VectorStoreIndex, vector_stores, prompts
 from llama_index.core.postprocessor.types import BaseNodePostprocessor
 from llama_index.core.chat_engine.types import AgentChatResponse, StreamingAgentChatResponse
 from typing import Optional
 from pydantic import BaseModel
-from typing import TypeVar
+from typing import TypeVar, List
 import json
+from app.domain import SkillLevelAssessmentModel
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -61,3 +62,14 @@ class ChatEngineService:
         json_output = json.loads(st_text.text)
 
         return model_class(**json_output) if isinstance(json_output, dict) else model_class(**json.loads(json_output)) if isinstance(json_output, str) else json_output
+
+    async def skill_level_assessment_agent(self, interview: str) -> dict:
+        prompt = f"You are an expert in assessing skill levels based on interview transcripts. Please analyze the following interview and provide a structured assessment of the skill level for each skill mentioned. The output should be in JSON array format with the following fields: 'skill_name', 'skill_level', and 'assessment_notes' for each skill.\n\nInterview Transcript:\n{interview}"
+        
+        st_llm = self.llm.as_structured_llm(SkillLevelAssessmentModel)
+        
+        st_text = st_llm.complete(prompt)
+        json_output = json.loads(st_text.text)
+        
+        return json_output
+

@@ -3,6 +3,7 @@ from app.api.dependencies import get_services
 from app.api.schemas import UpdateApplicationRequest  # Assuming you have a schema for the payload
 from app.services import Services
 from datetime import datetime
+import json
 
 router = APIRouter(
     prefix="/webhook",
@@ -12,8 +13,13 @@ router = APIRouter(
 
 @router.post("/interview-invitation")
 async def update_application(payload: UpdateApplicationRequest, services: Services = Depends(get_services)):
-    application = services.hireai_db.applicant.update(payload.application_id, {
-            "skills": payload.skills,
+    print(payload)
+    # list to string
+    transcript_str = json.dumps(payload.transcript)
+    skill_levels = await services.chat_engine_service.skill_level_assessment_agent(transcript_str)
+    print(f"Skill levels: {skill_levels}")
+    application = services.hireai_db.applicant.update(payload.applicant_id, {
+            "skills": skill_levels['data'],
         })
     return {
         "applicant": application,
