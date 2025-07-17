@@ -2,11 +2,25 @@ from aio_pika import connect_robust, abc, Message
 from app.api.dependencies import build_services
 from app.domain.cv import SimpleCVModelExtract
 import json
+from app.services.hireai_db import HireAIDB
+from app.core import get_settings
+
+settings = get_settings()
 
 class RabbitMQ:
     def __init__(self, connection_string: str):
         self.connection_string = connection_string
         self.services = build_services()
+
+    def get_hireai_db(self) -> HireAIDB:
+        return HireAIDB(
+            db_config={
+                "dbname": settings.PGDATABASE,
+                "user": settings.PGUSER,
+                "password": settings.PGPASSWORD,
+                "host": settings.PGHOST,
+        }
+    )
     
     async def connect(self):
         self.connection = await connect_robust(self.connection_string)
@@ -16,6 +30,9 @@ class RabbitMQ:
 
     async def on_message(self, message: abc.AbstractIncomingMessage):
         try:
+            hireaidb = self.get_hireai_db()
+            if not hireaidb:
+                raise RuntimeError("HireAIDB connection is not established.")
             body = message.body.decode()
             json_body = json.loads(body)
             if (json_body['event'] == 'update-applicant-from-embedded'):
@@ -33,7 +50,7 @@ class RabbitMQ:
                 )
                 st_output_dict = st_output.model_dump(exclude_none=True)
                 print(f"Structured output: {st_output_dict}")
-                self.services.hireai_db.applicant.update(applicant_id, {
+                hireaidb.applicant.update(applicant_id, {
                     "summary": st_output_dict['summary'] if 'summary' in st_output_dict else "",
                     "education": st_output_dict['educations'] if 'educations' in st_output_dict else [],
                     "experience": st_output_dict['experiences'] if 'experiences' in st_output_dict else [],
