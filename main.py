@@ -8,6 +8,9 @@ import uvicorn
 import os
 import json
 
+import logging
+logging.basicConfig(level=logging.INFO)
+
 settings = get_settings()
 os.environ["OPENAI_API_KEY"] = settings.OPENAI_API_KEY
 
