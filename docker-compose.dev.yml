@@ -6,7 +6,9 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "8001:8000" # Forward host port 8001 to container port 8000
+    volumes:
+      - .:/app # Mount local code for live updates
     depends_on:
       - rabbitmq
       - qdrant
@@ -17,15 +19,15 @@ services:
       QDRANT_HOST: qdrant
       QDRANT_PORT: 6333   
       LLM_SHERPA_URL: http://llmsherpa:5010/api/parseDocument?renderFormat=all&useNewIndentParser=true
-      APP_MODE: PRODUCTION
+      APP_MODE: DEVELOPMENT
     networks:
       - app-network
 
   rabbitmq:
     image: rabbitmq:management-alpine
     ports:
-      - "5672:5672" # AMQP port
-      - "15672:15672" # Management UI port
+      - "5673:5672" # Forward host port 5673 to container AMQP port 5672
+      - "15673:15672" # Forward host port 15673 to container management port 15672
     networks:
       - app-network
     environment:
@@ -35,15 +37,8 @@ services:
   qdrant:
     image: qdrant/qdrant
     ports:
-      - "6333:6333" # HTTP API port
-      - "6334:6334" # gRPC API port
-    networks:
-      - app-network
-  
-  llmsherpa:
-    image: ghcr.io/nlmatics/nlm-ingestor
-    ports:
-      - "5010:5001"
+      - "6335:6333" # Forward host port 6335 to container HTTP API port 6333
+      - "6336:6334" # Forward host port 6336 to container gRPC API port 6334
     networks:
       - app-network
 

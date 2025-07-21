@@ -40,7 +40,7 @@ class Settings(BaseSettings):
 
     RABBITMQ_CONNECTION_URL: str = ""
 
-    ELEVENLABS_SECRET: str = "wsec_3ea15b1f1d7b91dd677b95b6a5f3088be2f1569629d2ae65ed60793e8a7a7092"
+    APP_MODE: str = "PRODUCTION"  # options: DEVELOPMENT, PRODUCTION
 
     model_config = SettingsConfigDict(env_file=".env")
 
