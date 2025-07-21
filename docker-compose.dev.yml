@@ -17,8 +17,8 @@ services:
     environment:
       RABBITMQ_CONNECTION_URL: amqp://user:password@rabbitmq:5672/
       QDRANT_HOST: qdrant
-      QDRANT_PORT: 6335
-      LLM_SHERPA_URL: http://llmsherpa:5011/api/parseDocument?renderFormat=all&useNewIndentParser=true
+      QDRANT_PORT: 6333
+      LLM_SHERPA_URL: http://llmsherpa:5001/api/parseDocument?renderFormat=all&useNewIndentParser=true
       APP_MODE: DEVELOPMENT
     networks:
       - app-network
