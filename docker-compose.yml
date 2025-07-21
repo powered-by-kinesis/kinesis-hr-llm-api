@@ -54,3 +54,7 @@ services:
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  rabbitmq_data:
+  qdrant_storage:
