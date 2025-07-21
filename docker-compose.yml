@@ -31,6 +31,8 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: user
       RABBITMQ_DEFAULT_PASS: password
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
 
   qdrant:
     image: qdrant/qdrant
@@ -39,6 +41,8 @@ services:
       - "6334:6334" # gRPC API port
     networks:
       - app-network
+    volumes:
+      - qdrant_storage:/qdrant/storage
   
   llmsherpa:
     image: ghcr.io/nlmatics/nlm-ingestor
