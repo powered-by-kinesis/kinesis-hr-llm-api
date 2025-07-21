@@ -18,7 +18,7 @@ services:
       RABBITMQ_CONNECTION_URL: amqp://user:password@rabbitmq:5672/
       QDRANT_HOST: qdrant
       QDRANT_PORT: 6335
-      LLM_SHERPA_URL: http://llmsherpa:5010/api/parseDocument?renderFormat=all&useNewIndentParser=true
+      LLM_SHERPA_URL: http://llmsherpa:5011/api/parseDocument?renderFormat=all&useNewIndentParser=true
       APP_MODE: DEVELOPMENT
     networks:
       - app-network
@@ -39,6 +39,12 @@ services:
     ports:
       - "6335:6333" # Forward host port 6335 to container HTTP API port 6333
       - "6336:6334" # Forward host port 6336 to container gRPC API port 6334
+    networks:
+      - app-network
+  llmsherpa:
+    image: ghcr.io/nlmatics/nlm-ingestor
+    ports:
+      - "5011:5001"
     networks:
       - app-network
 
