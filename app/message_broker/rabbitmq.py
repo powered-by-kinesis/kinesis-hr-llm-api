@@ -4,13 +4,14 @@ from app.domain.cv import SimpleCVModelExtract
 import json
 from app.services.hireai_db import HireAIDB
 from app.core import get_settings
-
 settings = get_settings()
+
+services = build_services()
 
 class RabbitMQ:
     def __init__(self, connection_string: str):
         self.connection_string = connection_string
-        self.services = build_services()
+        
 
     def get_hireai_db(self) -> HireAIDB:
         return HireAIDB(
@@ -34,6 +35,7 @@ class RabbitMQ:
             if not hireaidb:
                 raise RuntimeError("HireAIDB connection is not established.")
             body = message.body.decode()
+            print(f"Received message: {body}")
             json_body = json.loads(body)
             if (json_body['event'] == 'update-applicant-from-embedded'):
                 data = json_body['data']
@@ -43,7 +45,7 @@ class RabbitMQ:
                 metadata_filters = [
                     {"key": "applicant_id", "value": applicant_id}
                 ]
-                st_output = await self.services.chat_engine_service.get_structured_output(
+                st_output = await services.chat_engine_service.get_structured_output(
                     model_class=SimpleCVModelExtract,
                     query="Get the summary(generate if not present), education, work history, location, and international languages(generate from where they live if not present)",
                     metadata_filters=metadata_filters
@@ -61,11 +63,11 @@ class RabbitMQ:
                 
             elif (json_body['event'] == 'store-pdf'):
                 data = json_body['data']
-                print(f"Processing message: {data}")
+                print(f"Processing message store-pdf: {data}")
                 file_urls = data['file_urls']
                 applicant_id = data['applicant_id']
 
-                await self.services.vector_store_index_service.add(files=file_urls, metadata={"applicant_id": applicant_id})
+                await services.vector_store_index_service.add(files=file_urls, metadata={"applicant_id": applicant_id})
                 await self.send_message(json.dumps({
                     "event": "update-applicant-from-embedded",
                     "data": {
@@ -87,6 +89,7 @@ class RabbitMQ:
             routing_key=self.queue.name
         )
         print(f"Sent message: {message}")
+        
 
     async def close(self):
         if hasattr(self, 'connection'):

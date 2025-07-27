@@ -50,9 +50,7 @@ class ChatEngineService:
             response_synthesizer=response_synthesizer,
             node_postprocessors=[self.rerank_model] if self.rerank_model else [],
         )
-        retriv = retriever.retrieve(query)
-        for node in retriv:
-            print(f"Retrieving node: {node.get_content()}")
+
         resp = engine.query(query)
 
         print(f"Response: {resp.response}")

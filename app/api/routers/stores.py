@@ -3,19 +3,25 @@ from app.api.dependencies import get_services
 from app.services import Services
 from app.domain.cv import SimpleCVModelExtract
 import json
+from app.core import get_settings
+import os
+from app.api.dependencies import build_services
 
 router = APIRouter(
     prefix="/stores",
     tags=["stores"],
-    dependencies=[Depends(get_services)],
     responses={404: {"description": "Not found"}},
 )
+
+settings = get_settings()
+os.environ["OPENAI_API_KEY"] = settings.OPENAI_API_KEY
+
+services = build_services()
 
 @router.post("/")
 async def store_pdf(
     metadata: str | None = Form(...),
     files: list[UploadFile] = File(...),
-    services: Services = Depends(get_services),
 ):
     parsed_metadata = json.loads(metadata)
     await services.vector_store_index_service.add(files, metadata=parsed_metadata)

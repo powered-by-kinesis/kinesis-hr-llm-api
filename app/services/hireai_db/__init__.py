@@ -12,6 +12,7 @@ class HireAIDB:
                 host=db_config['host'],
             )
             # run some ping to test the connection
+            self.connection_string = f"postgresql+psycopg2://{db_config['user']}:{db_config['password']}@{db_config['host']}/{db_config['dbname']}"
             with conn.cursor() as cursor:
                 cursor.execute("SELECT 1")
             self.applicant = ApplicantContext(conn=conn)

@@ -92,6 +92,8 @@ def build_services() -> Services:
     llm = get_llm()
     hireai_db = get_hireai_db()
 
+    print("Building services ...")
+
     return Services(
         vector_store=vector_store,
         embedding_model=embedding_model,

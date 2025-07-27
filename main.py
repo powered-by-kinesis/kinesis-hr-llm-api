@@ -37,12 +37,8 @@ async def publish_message(payload: PublishMessageRequest):
     await app.state.rabbit_mq_send(json.dumps(payload.model_dump(exclude_none=True)))
     return {"message": "Message sent to RabbitMQ"}
 
-# print all settings
-for key, value in settings.model_dump().items():
-    pass
-    # print(f"{key}: {value}")
-
 app.include_router(router, prefix="/api/v1")
+
 @app.get("/")
 async def root():
     return {"message": "Welcome to the FastAPI application!"}

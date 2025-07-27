@@ -13,3 +13,6 @@ app/assets/*
 certbot/*
 testing.py
 .env
+*.ipynb
+
+table_index_dir

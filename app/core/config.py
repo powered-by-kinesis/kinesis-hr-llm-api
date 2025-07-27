@@ -22,11 +22,15 @@ class Settings(BaseSettings):
     # OpenAI configurations
     OPENAI_EMBEDDING_MODEL: str = "text-embedding-ada-002"
     OPENAI_API_KEY: str = ""
-    OPENAI_LLM_MODEL: str = "gpt-4o"  # options: gpt-3.5-turbo, gpt-4, gpt-4o
+    OPENAI_LLM_MODEL: str = "gpt-3.5-turbo"  # options: gpt-3.5-turbo, gpt-4, gpt-4o
 
     # Jina configurations
     JINA_EMBEDDING_MODEL: str = "jina-embedding-v3"
     JINA_API_KEY: str = ""
+
+    # Gemini configurations
+    GEMINI_API_KEY: str = ""
+    GEMINI_LLM_MODEL: str = "gemini-2.5-flash"
 
     # llmsherpa url
     LLM_SHERPA_URL: str = ""

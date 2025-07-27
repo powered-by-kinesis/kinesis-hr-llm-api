@@ -16,3 +16,4 @@ class Services:
         self.vector_store_index_service = VectorStoreIndexService(vector_store_index=index)
         self.chat_engine_service = ChatEngineService(index=index, llm=llm, rerank_model=None)
         self.hireai_db = hireai_db
+        
