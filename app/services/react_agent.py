@@ -123,7 +123,7 @@ class ReActAgentService:
             if not os.path.exists(f"{table_index_dir}/{table_name}"):
                 # get all rows from table
                 with engine.connect() as conn:
-                    cursor = conn.execute(text(f'SELECT * FROM "{table_name}" limit 50'))
+                    cursor = conn.execute(text(f'SELECT * FROM "{table_name}" limit 1'))
                     result = cursor.fetchall()
                     row_tups = []
                     for row in result:

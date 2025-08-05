@@ -53,8 +53,6 @@ class ChatEngineService:
 
         resp = engine.query(query)
 
-        print(f"Response: {resp.response}")
-
         st_llm = self.llm.as_structured_llm(model_class)
         st_text = st_llm.complete(resp.response)
         json_output = json.loads(st_text.text)
